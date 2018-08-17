@@ -13,19 +13,17 @@ There are already several solutions available, so why write another comment engi
 
 |   Method   |    URL     |  query params   |  data                           | returns               |
 |------------|------------|-----------------|---------------------------------|---------------------  |
-|  GET       | /          | baseURL, slug, active, approved   |               |  comments for the url |
-|  GET       | /count     | baseURL         | count for comments for each slug at a baseURL | `{ slug : int, ... }` |
-|  PUT       | /commentID |                 | list of commentIDs to approve   |  200                  |
-|  PUT       | /commentID |                 | list of commentIDs to unapprove |  200                  |
-|  PUT       | /commentID |                 | list of commentIDs to deactivate|  200                  |
-|  DELETE    | /          |                 | list of commentIDs to delete    |  200                  |
-|            |            |                 |                                 |                       |
+|  GET       | /comments  | baseURL, slug, active, approved   |               |  comments for the url |
+|  GET       | /comments/count | baseURL, slug, active, approved |            |        comment count  |
+|  GET       | /comments/commentID |                 |                        |  the comment          |
+|  PUT       | /comments/commentID |                 | update comment (ie approve) |  200             |
+|  DELETE    | /comments/commentID |                 |                        |  200                  |
 
 ## Public API
 
 |   Method   |    URL     | query params |  data   | returns    |
 |------------|------------|--------------|---------|------------|
-|  POST      |  /comment  |              | `{ comment: string, email: string, honeypot: string, url: string }` | 201 |
+|  POST      |  /comments |              | `{ comment: string, email: string, honeypot: string, url: string }` | 201 |
 
 ## Data Model
 
