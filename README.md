@@ -7,6 +7,18 @@ There are already several solutions available, so why write another comment engi
 - It looked fun to make
 - I want the comments to be stored in the repo and available at site generation time
 
+## Architecture Overview
+
+`server/` contains the Flask server. `client/` contains the Vue admin client that is served at `/`.
+
+### Flask
+
+- [Peewee ORM](http://docs.peewee-orm.com/en/latest/)
+
+### Vue
+
+- [ElementUI](https://element.eleme.io)
+
 ## API
 
 ### Protected API 
