@@ -44,9 +44,12 @@ There are already several solutions available, so why write another comment engi
   id: string,
   comment: string,
   email: md5 hash,
+  create_date: date,
+  update_date: date,
   approved: bool,
   active: bool,
-  url: string
+  base_url: string,
+  stub_url: string
 }
 ```
 
