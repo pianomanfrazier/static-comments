@@ -13,7 +13,8 @@ There are already several solutions available, so why write another comment engi
 
 ### Flask
 
-- [Peewee ORM](http://docs.peewee-orm.com/en/latest/)
+- SQL Alchemy
+- Flask Migrate
 
 ### Vue
 
