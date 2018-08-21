@@ -4,30 +4,34 @@ from .authentication import requires_auth
 
 api = Blueprint('api', __name__)
 
+def validate_comment(comment):
+    """
+    TODO
+    ----
+    - check honeypot
+    - check url against urls in config
+    """
+    pass
+
 @api.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
         return jsonify({'msg': 'The static comment api version 1'})
     elif request.method == 'POST':
-        '''
+        """
         {
             comment: string,
             email: string,
             honeypot: string,
             url: string
         }
-        TODO
-        ----
-        - bleach the comment
-        - check honeypot
-        - check url against urls in config
-        '''
+        """
         return jsonify({'msg': 'Comment submitted', 'error': False}), 201
 
 @requires_auth
 @api.route('/comments', methods=['GET'])
 def comments():
-    '''
+    """ 
     returns comments from the database
     requires admin authorization
 
@@ -37,7 +41,13 @@ def comments():
     slug: the article slug in the url
     approved: bool
     active: bool
-    '''
+
+    TODO
+    ----
+    - bleach all input upon render 
+    see https://github.com/miguelgrinberg/flack/blob/85af2b76d801b38d5728e2fa08cb1cdd713cabf9/flack/api/messages.py#L14
+    and https://github.com/miguelgrinberg/flack/blob/85af2b76d801b38d5728e2fa08cb1cdd713cabf9/flack/models.py#L141
+    """
     return jsonify({
         'email': hashlib.md5('jim@jim.com'.lower().encode('utf-8')).hexdigest(),
         'name': 'Jim Bob',
@@ -48,7 +58,7 @@ def comments():
 @requires_auth
 @api.route('/comments/count', methods=['GET'])
 def count():
-    '''
+    """
     returns the count of comments for a particular resource
 
     QUERY PARAMS
@@ -57,7 +67,7 @@ def count():
     slug: the article slug in the url
     approved: bool
     active: bool
-    '''
+    """
     return 'count'
 
 @requires_auth
