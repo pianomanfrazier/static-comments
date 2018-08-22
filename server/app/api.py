@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 import hashlib
 from .authentication import requires_auth
+from .models import Comment
+from . import db
 
 api = Blueprint('api', __name__)
 
@@ -13,20 +15,29 @@ def validate_comment(comment):
     """
     pass
 
-@api.route('/', methods=['GET', 'POST'])
+@api.route('/', methods=['GET'])
 def index():
-    if request.method == 'GET':
-        return jsonify({'msg': 'The static comment api version 1'})
-    elif request.method == 'POST':
-        """
-        {
-            comment: string,
-            email: string,
-            honeypot: string,
-            url: string
-        }
-        """
-        return jsonify({'msg': 'Comment submitted', 'error': False}), 201
+    return jsonify({'msg': 'The static comment api version 1'})
+
+@api.route('/comments', methods=['POST'])
+def new_comment():
+    """
+    public facing api endpoint
+
+    {
+        comment: string, # can accept markdown
+        name: string,
+        email: string,
+        honeypot: string,
+        url: string
+    }
+    """
+    comment = Comment.create(request.get_json() or {})
+    db.session.add(comment)
+    db.session.commit()
+    
+    return jsonify(comment.to_dict()), 201
+
 
 @requires_auth
 @api.route('/comments', methods=['GET'])
@@ -44,16 +55,9 @@ def comments():
 
     TODO
     ----
-    - bleach all input upon render 
-    see https://github.com/miguelgrinberg/flack/blob/85af2b76d801b38d5728e2fa08cb1cdd713cabf9/flack/api/messages.py#L14
-    and https://github.com/miguelgrinberg/flack/blob/85af2b76d801b38d5728e2fa08cb1cdd713cabf9/flack/models.py#L141
+    filter output based on query params
     """
-    return jsonify({
-        'email': hashlib.md5('jim@jim.com'.lower().encode('utf-8')).hexdigest(),
-        'name': 'Jim Bob',
-        'comment': 'Howdy, this is a great comment',
-        'date': '2018-08-21_21:33:35'
-    })
+    return jsonify([comment.to_dict() for comment in Comment.query.all()])
 
 @requires_auth
 @api.route('/comments/count', methods=['GET'])
@@ -67,18 +71,42 @@ def count():
     slug: the article slug in the url
     approved: bool
     active: bool
+
+    TODO
+    ----
+    filter output based on query params
     """
     return 'count'
 
 @requires_auth
-@api.route('/comments/<id>', methods=['GET', 'PUT', 'DELETE'])
-def comment(id=None):
-    if request.method == 'GET':
-        if id != '1':
-            return id
-        else:
-            return jsonify({'msg':'Comment ID not found', 'error': True}), 404
-    elif request.method == 'PUT':
+@api.route('/comments/<id>', methods=['GET'])
+def get_comment(id):
+    comment = Comment.query.get(id)
+    if comment:
+        return jsonify(comment.to_dict()), 200
+    else:
+        return jsonify({'msg':'Comment not found', 'error': True}), 404
+        
+
+@requires_auth
+@api.route('/comments/<id>', methods=['PUT'])
+def update_comment(id):
+    comment = Comment.query.get(id)
+    if comment:
+        comment.from_dict(request.get_json() or {})
+        db.session.commit()
         return jsonify({'msg':'Comment updated', 'error': False}), 200 
-    elif request.method == 'DELETE':
+    else:
+        return jsonify({'msg':'Comment not found', 'error': True}), 404
+
+@requires_auth
+@api.route('/comments/<id>', methods=['DELETE'])
+def delete_comment(id):
+    comment = Comment.query.get(id)
+    if comment:
+        db.session.delete(comment)
+        db.session.commit()
         return jsonify({'msg':'Comment deleted', 'error': False}), 200 
+    else:
+        return jsonify({'msg':'Comment not found', 'error': True}), 404
+
