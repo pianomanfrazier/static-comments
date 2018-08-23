@@ -29,8 +29,8 @@ print('and code too')
     """,
     "name"      : "jim bob",
     "email"     : "r@r.com",
-    "honeypot"  : "I'm a human",
-    "url"       : "http://www.staticsite.com/post/everything-is-awesome"
+    "honeypot"  : "", # leave empty
+    "url"       : "http://localhost:5000/post/everything-is-awesome"
 }
 
 BASEURL = 'http://localhost:5000'
@@ -45,7 +45,7 @@ def post_comment():
         new_id = json.loads(r.text)['id']
         return r.status_code, new_id
     except:
-        return r.status_code
+        return r.status_code, -1
 
 def get_all_comments():
     url = BASEURL + API + '/comments'

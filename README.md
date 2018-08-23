@@ -26,8 +26,8 @@ There are already several solutions available, so why write another comment engi
 
 |   Method   |    URL     |  query params   |  data                           | returns               |
 |------------|------------|-----------------|---------------------------------|---------------------  |
-|  GET       | /comments  | baseURL, slug, active, approved   |               |  comments for the url |
-|  GET       | /comments/count | baseURL, slug, active, approved |            |        comment count  |
+|  GET       | /comments  | base_url, slug, active, approved   |               |  comments for the url |
+|  GET       | /comments/count | base_url, slug, active, approved |            |        comment count  |
 |  GET       | /comments/commentID |                 |                        |  the comment          |
 |  PUT       | /comments/commentID |                 | update comment (ie approve) |  200             |
 |  DELETE    | /comments/commentID |                 |                        |  200                  |

@@ -4,6 +4,7 @@ import hashlib
 from urllib.parse import urlparse
 from markdown import markdown
 from . import db
+from . import app
 from sqlalchemy.sql import func
 
 class Comment(db.Model):
@@ -30,11 +31,16 @@ class Comment(db.Model):
     return comment
 
   def from_dict(self, data):
+    if 'honeypot' in data:
+      if data['honeypot'] != '':
+        abort(400)
     if 'email' in data:
       self.email = data['email']
     try:
       parsed = urlparse(data['url'])
       self.base_url = parsed.netloc
+      if self.base_url not in app.config['ACCEPT_URLS']:
+        abort(400)
       self.stub_url = parsed.path
       self.comment = data['comment']
       self.name = data['name']

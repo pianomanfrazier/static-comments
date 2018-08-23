@@ -35,7 +35,7 @@ def new_comment():
     comment = Comment.create(request.get_json() or {})
     db.session.add(comment)
     db.session.commit()
-    
+
     return jsonify(comment.to_dict()), 201
 
 
@@ -48,16 +48,19 @@ def comments():
 
     QUERY PARAMS
     ------------
-    baseURL: qualified baseURL from the config
+    base_url: qualified baseURL from the config
     slug: the article slug in the url
     approved: bool
     active: bool
-
-    TODO
-    ----
-    filter output based on query params
     """
-    return jsonify([comment.to_dict() for comment in Comment.query.all()])
+    params = ['base_url', 'slug', 'approved', 'active']
+    query = Comment.query
+    for param in params:
+        p = request.args.get(param, type=str)
+        if p and getattr(Comment, param):
+            # perhaps not too safe but the route is protected
+            query = query.filter(getattr(Comment, param) == request.args.get(param))
+    return jsonify([comment.to_dict() for comment in query])
 
 @requires_auth
 @api.route('/comments/count', methods=['GET'])
